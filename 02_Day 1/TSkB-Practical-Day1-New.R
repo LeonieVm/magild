@@ -632,7 +632,7 @@ RandomEffects_Bayes <- brm(Popular ~ 1 + Gender + Extraversion + teacherExp +
 summary(RandomEffects_Bayes)
 plot(RandomEffects_Bayes)
 
-pairs(RandomEffects_Bayes)
+#pairs(RandomEffects_Bayes)
 pairs(RandomEffects_Bayes, variable = c("sd_Class__Intercept", "b_Intercept"))
 pairs(RandomEffects_Bayes, variable = c("sd_Class__Gender", "b_Gender"))
 pairs(RandomEffects_Bayes, variable = c("sd_Class__Extraversion", "b_Extraversion"))
