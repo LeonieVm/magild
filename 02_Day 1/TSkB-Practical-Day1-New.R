@@ -531,7 +531,7 @@ Coefficients
 # Why can't we include teacher experience as a predictor in the separate 
 # regression analyses above?
 
-# Because the scores on teacher experience don't vary within classes            #### A
+# Because the scores on teacher experience don't vary within classes            
 
 
 #### Assignment 4 --------------------------------------------------------------
@@ -577,7 +577,7 @@ summary(ResultsLmer_Gender_Ex)
 # if you stored them in a matrix, you can use the following code
 apply(Coefficients, 2, mean, na.rm = TRUE)
 
-# You see that the mean estimates across the separate analyses are not identical#### A
+# You see that the mean estimates across the separate analyses are not identical
 # to the multilevel estimates. This is because multilevel analysis assumes that 
 # the inter-class differences in the intercept and coefficients are normally 
 # distributed whereas the estimates from the separate analyses don't impose a 
@@ -594,7 +594,7 @@ ResultsLmer_teacherExp <- lmer(Popular ~ 1 + teacherExp + (1 | Class), Total)
 summary(ResultsLmer_teacherExp)
 summary(ResultsLevel2)
 
-# No, the estimate for the effect of teacher Exp is not exactly the same. This  #### A
+# No, the estimate for the effect of teacher Exp is not exactly the same. This  
 # is because the classes are not all the same size. Some have more pupils
 # than others. The multilevel estimates are weighted for these class-size 
 # differences while the regression analysis on the mean scores was not.    
