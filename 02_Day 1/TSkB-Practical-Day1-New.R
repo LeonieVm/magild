@@ -612,13 +612,30 @@ FixedEffects <- lmer(Popular ~ 1 + Gender + Extraversion +
 summary(FixedEffects)
 
 #### Assignment 7 --------------------------------------------------------------
-# Now allow the relation between the first level predictors and popularity to   ##### CHECK: WARNING; ADD BRMS
+# Now allow the relation between the first level predictors and popularity to   
 # not be the same across classes.
 # What type of effect do you need to add? 
+#
+# You will notice an warning when running the code below, this has to do with
+# the random effects in the model, can you figure out what the issue is?
+#
 RandomEffects <- lmer(Popular ~ 1 + Gender + Extraversion + teacherExp + 
                         (1 + Gender + Extraversion | Class), Total)
 summary(RandomEffects)
 rand(RandomEffects)
+
+# Also run the model using brms. What warning do you get now? And can you figure
+# out the problem using the pairs plots?
+
+RandomEffects_Bayes <- brm(Popular ~ 1 + Gender + Extraversion + teacherExp + 
+                        (1 + Gender + Extraversion | Class), Total)
+summary(RandomEffects_Bayes)
+plot(RandomEffects_Bayes)
+
+pairs(RandomEffects_Bayes)
+pairs(RandomEffects_Bayes, variable = c("sd_Class__Intercept", "b_Intercept"))
+pairs(RandomEffects_Bayes, variable = c("sd_Class__Gender", "b_Gender"))
+pairs(RandomEffects_Bayes, variable = c("sd_Class__Extraversion", "b_Extraversion"))
 
 # Both random slopes are non-significant. Therefore, we do not have to add these
 # effects to our model.
