@@ -637,7 +637,16 @@ pairs(RandomEffects_Bayes, variable = c("sd_Class__Intercept", "b_Intercept"))
 pairs(RandomEffects_Bayes, variable = c("sd_Class__Gender", "b_Gender"))
 pairs(RandomEffects_Bayes, variable = c("sd_Class__Extraversion", "b_Extraversion"))
 
-# Both random slopes are non-significant. Therefore, we do not have to add these
+# Now run the model with the suggested djustement to adapt_delta, which
+# makes the sampler more "fine grained" and check results. What is your
+# conclusion
+
+RandomEffects_Bayes2 <- brm(Popular ~ 1 + Gender + Extraversion + teacherExp + 
+                             (1 + Gender + Extraversion | Class), 
+                           control = list(adapt_delta = 0.9), Total)
+summary(RandomEffects_Bayes2)
+
+# Both random slopes are non-significant/very small. Therefore, we do not have to add these
 # effects to our model.
 
 # Now check the normality of the errors in your final model. 
