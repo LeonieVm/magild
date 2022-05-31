@@ -526,12 +526,6 @@ summary(MaximumModel_3lv)
 ## Exercise 1e Cross-Classified Data
 #------------------------------------------------------------------------------#
 
-pupcross$ACHIEV <- as.numeric(pupcross$ACHIEV)
-pupcross$PUPSEX <- as.numeric(pupcross$PUPSEX)
-pupcross$PUPSES <- as.numeric(pupcross$PUPSES)
-pupcross$PDENOM <- as.numeric(pupcross$PDENOM)
-pupcross$SDENOM <- as.numeric(pupcross$SDENOM)
-
 as_tibble(pupcross)
 
 
@@ -571,9 +565,6 @@ Variance_CR <- as.data.frame(VarCorr(IO_CR))
 
 # Total variance on the higher levels
 performance::icc(IO_CR) # 31.70%
-
-# OR
-
 
 # Can you tell how cross-clasification is specified differently then nested
 # levels?
