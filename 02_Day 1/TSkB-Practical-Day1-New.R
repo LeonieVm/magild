@@ -446,7 +446,7 @@ exp(confint(fit6_b2))
 #### Obtain average of deformed pups--------------------------------------------
 scenario_2 %>% 
   summarise(mean_2a = mean(count_2a), sd_2a = sd(count_2a),
-            mean_2b = mean(count_2b), sd_2b = sd(count_2b) )
+            mean_2b = mean(count_2b), sd_2b = sd(count_2b))
 
 #### Obtain CI_odds_ratio-------------------------------------------------------
 exp(confint(fit6_a1))
