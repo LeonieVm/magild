@@ -378,7 +378,7 @@ exp(confint(fit3_b))
 p_head_function(exp(coef(fit3_b)[1] - 1.96 * sqrt(vcov(fit3_b))))
 p_head_function(exp(coef(fit3_b)[1] + 1.96 * sqrt(vcov(fit3_b))))
 
-
+#### Summaries of all models----------------------------------------------------
 summary(fit1)
 summary(fit2)
 summary(fit3_a)
@@ -406,7 +406,6 @@ summary(fit3_b)
 #------------------------------------------------------------------------------#
 
 #### Run the following code to answer questions 6 to 11: 
-
 
 #### Fit model binomial scenario 2a---------------------------------------------
 fit6_a1 <- glm(cbind(count_2a, 10 - count_2a) ~ dose, 
@@ -453,6 +452,12 @@ exp(confint(fit6_a1))
 exp(confint(fit6_a2))
 exp(confint(fit6_b1))
 exp(confint(fit6_b2))
+
+#### Summaries of all models----------------------------------------------------
+summary(fit6_a1)
+summary(fit6_a2)
+summary(fit6_b1)
+summary(fit6_b2)
 
 #### A6: Probabilities are .517 and .567 for scenarios 1a and 1b, and those 
 ####     probabilities are assumed to apply to every dam (no matter the dosage 
