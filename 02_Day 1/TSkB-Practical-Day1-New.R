@@ -655,11 +655,11 @@ RandomEffects_Bayes2 <- brm(Popular ~ 1 + Gender + Extraversion + teacherExp +
                            control = list(adapt_delta = 0.9), Total)
 summary(RandomEffects_Bayes2)
 
-# Both random slopes are non-significant/very small. Therefore, we do not have to add these
-# effects to our model.
+# Both random slopes are non-significant/very small. Therefore, we do not have to 
+# add these effects to our model.
 
 # Now check the normality of the errors in your final model. 
-# Tip: Lookup the residual and ranef commands
+# Tip: Look up the residual and ranef commands
 
 # For level 1
 hist(residuals(RandomEffects))
