@@ -138,8 +138,9 @@ check_model(Regr1b)
 Regr1c <- lm(Popular ~ 1 + ordered(Extraversion) + Gender, data = Total)
 check_model(Regr1c)
 
-# We decide to go for the regression model with Extraversion as a continuous 
-# variable, but want to correct SE's just to check. Use the vcovHC command for 
+# We decide to go for the regression model with extraversion as a continuous 
+# variable (because entering extraversion as factor did not improve diagnostics), 
+# but we want to correct the SEs. Use the vcovHC command for 
 # this
 covHC0 <- vcovHC(Regr1)
 
@@ -168,7 +169,7 @@ Regr1_hs <- lm(Popular ~ 1 + Extraversion + Gender, data = Total_HS)
 check_model(Regr1_hs)
 summary(Regr1_hs)
 
-# Rerun model with robust SE's: What do you notice?
+# Rerun model with robust SEs: What do you notice?
 covHC0_hs <- vcovHC(Regr1_hs)
 coeftest(Regr1_hs, vcov = covHC0_hs)
 
