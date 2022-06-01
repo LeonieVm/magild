@@ -143,7 +143,7 @@ check_model(Regr1c)
 # this
 covHC0 <- vcovHC(Regr1)
 
-# Use the HC covariance matrix from (1) to test the coefficients of Regr1 with
+# Use the HC covariance matrix covHC0 to test the coefficients of Regr1 with
 # robust SEs.
 coeftest(Regr1, vcov = covHC0)
 
@@ -383,7 +383,7 @@ summary(fit3_b)
 ####     larger SEs for parameters (i.e., less certainty in our parameter 
 ####     estimates) and wider CIs and higher p-values. Each CI does not 
 ####     necessarily contain the true value, but if we rerun the analysis 100 
-####     times on 100 samples, 95% of the 95% CIs should contain the true model. 
+####     times on 100 samples, 95% of the 95% CIs should contain the true value. 
 ####     In case of overdispersion, less than 95% of the 95% CIs from the 
 ####     binomial model will contain the true value.
 
