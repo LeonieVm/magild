@@ -678,7 +678,7 @@ summary(FixedEffects)
 # the random effects in the model. Can you figure out what the issue is?
 
 RandomEffects <- lmer(Popular ~ 1 + Gender + Extraversion + teacherExp + 
-                        (1 + Gender + Extraversion | Class), seed = 25,
+                        (1 + Gender + Extraversion | Class),
                         Total)
 summary(RandomEffects)
 rand(RandomEffects)
