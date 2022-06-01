@@ -581,9 +581,7 @@ colnames(Coefficients) <- c("Intercept", "Extraversion", "Gender")
 # Then we automatically run lm on all the 12 classes and store the results
 for (i in 1:12) {
   Coefficients[i,] <- lm(Popular ~ 1+Extraversion+Gender, 
-                         data = eval(parse(text = 
-                                    paste("Class", i, sep = ""))))$coefficients
-  
+                         data = Total[Total$Class==i,])$coefficients
 }
 
 Coefficients
@@ -592,7 +590,7 @@ Coefficients
 # Why can't we include teacher experience as a predictor in the separate 
 # regression analyses above?
 
-# Because the scores on teacher experience don't vary within classes            
+# Because the scores on teacher experience don't vary within classes.            
 
 
 #### Assignment 4 --------------------------------------------------------------
@@ -602,27 +600,27 @@ Coefficients
 # sample size in this analysis?
 
 # Getting the means can be done for each dataset by typing
-mean(Class1$Popular) # and,
+mean(Class1$Popular) # and
 mean(Class1$teacherExp)
 # and then saving the values in two separate vectors
 # Alternatively, we can again do this automatically. First we create a matrix in 
-# which we store the intercepts and coefficients
+# which we store the intercepts and coefficients.
 Mean <- matrix(NA, ncol = 2, nrow = 12) 
-# And then we specify the column names
-colnames(Mean) <- c("Popular", "TeacherExperiece") 
-# Then, we automatically run lm on all the 12 classes and store the results
+# And then we specify the column names.
+colnames(Mean) <- c("Popular", "TeacherExperience") 
+# Then, we automatically run lm on all the 12 classes and store the results.
 for (i in 1:12) {
   Mean[i, 1] <- mean(eval(parse(text = paste("Class", i, sep = "")))$Popular)
   Mean[i, 2] <- mean(eval(parse(text = paste("Class", i, sep = "")))$teacherExp)
 }
 
-Mean
+Mean <- as.data.frame(Mean)
 
 # The regression analysis can subsequently be run using
-ResultsLevel2 <- lm(Mean[,1]~1+Mean[,2])
-ResultsLevel2 <-lm(Mean$Popular ~ 1+ Mean$TeacherExperiece)
+ResultsLevel2 <- lm(Mean[,1]~1+Mean[,2]) # or
+ResultsLevel2 <-lm(Mean$Popular ~ 1+ Mean$TeacherExperience)
 summary(ResultsLevel2)
-# Note that the sample size is equal to the number of Classes; that is, 12.
+# The sample size is equal to the number of Classes; that is, 12.
 
 
 #### Assignment 5 --------------------------------------------------------------
@@ -641,9 +639,9 @@ apply(Coefficients, 2, mean, na.rm = TRUE)
 # You see that the mean estimates across the separate analyses are not identical
 # to the multilevel estimates. This is because multilevel analysis assumes that 
 # the inter-class differences in the intercept and coefficients are normally 
-# distributed whereas the estimates from the separate analyses don't impose a 
+# distributed, whereas the estimates from the separate analyses don't impose a 
 # distribution on the individual estimates. As a result the multilevel estimates 
-# are "pulled" towards the mean parameter value across classes.
+# are "pulled" towards the mean parameter values across classes.
 
 
 # What about the multilevel regression coefficient for teacherExp? Is it the 
@@ -658,8 +656,7 @@ summary(ResultsLevel2)
 # No, the estimate for the effect of teacher Exp is not exactly the same. This  
 # is because the classes are not all the same size. Some have more pupils
 # than others. The multilevel estimates are weighted for these class-size 
-# differences while the regression analysis on the mean scores was not.    
-
+# differences, while the regression analysis on the mean scores was not.    
 
 
 #### Assignment 6 --------------------------------------------------------------
@@ -677,38 +674,39 @@ summary(FixedEffects)
 # not be the same across classes.
 # What type of effect do you need to add? 
 #
-# You will notice an warning when running the code below, this has to do with
-# the random effects in the model, can you figure out what the issue is?
-#
+# You will notice a warning when running the code below. This has to do with
+# the random effects in the model. Can you figure out what the issue is?
+
 RandomEffects <- lmer(Popular ~ 1 + Gender + Extraversion + teacherExp + 
-                        (1 + Gender + Extraversion | Class), Total)
+                        (1 + Gender + Extraversion | Class), seed = 25,
+                        Total)
 summary(RandomEffects)
 rand(RandomEffects)
 
-# Also run the model using brms. What warning do you get now? And can you figure
-# out the problem using the pairs plots?
+# Also run the model using brms. Do you get a warning now? If yes, can you 
+# figure out the problem using the pairs plots?
 
 RandomEffects_Bayes <- brm(Popular ~ 1 + Gender + Extraversion + teacherExp + 
                         (1 + Gender + Extraversion | Class), Total)
 summary(RandomEffects_Bayes)
 plot(RandomEffects_Bayes)
 
-#pairs(RandomEffects_Bayes)
+#pairs(RandomEffects_Bayes) # too big
 pairs(RandomEffects_Bayes, variable = c("sd_Class__Intercept", "b_Intercept"))
 pairs(RandomEffects_Bayes, variable = c("sd_Class__Gender", "b_Gender"))
 pairs(RandomEffects_Bayes, variable = c("sd_Class__Extraversion", "b_Extraversion"))
 
-# Now run the model with the suggested djustement to adapt_delta, which
-# makes the sampler more "fine grained" and check results. What is your
-# conclusion
+# If you got the error, now run the model with the suggested adjustment to 
+# adapt_delta, which makes the sampler more "fine grained" and check results. 
+# What is your conclusion?
 
 RandomEffects_Bayes2 <- brm(Popular ~ 1 + Gender + Extraversion + teacherExp + 
                              (1 + Gender + Extraversion | Class), 
                            control = list(adapt_delta = 0.9), Total)
 summary(RandomEffects_Bayes2)
 
-# Both random slopes are non-significant/very small. Therefore, we do not have to 
-# add these effects to our model.
+# Both slope variances are non-significant/very small. Therefore, we do not have 
+# to add these effects to our model.
 
 # Now check the normality of the errors in your final model. 
 # Tip: Look up the residual and ranef commands
