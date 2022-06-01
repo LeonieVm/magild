@@ -193,11 +193,19 @@ pp_check(Regr2_Bayes)
 
 summary(Regr1_hs) # frequentist model without correction for heterosc.
 summary(Regr1_Bayes) # Bayesian model without correction for heterosc.
-#--> just the same (both point estimates and SEs)
+# Point estimates and SEs are the same.
 
 coeftest(Regr1_hs, vcov = covHC0_hs) # frequentist with correction for heterosc.
 summary(Regr2_Bayes) # Bayesian model with correction for heterosc.
-#--> more insights because residuals are modeled as function of extraversion
+# We have more insights because residuals are modeled as function of 
+# extraversion.
+# The true effect of extraversion is .4. Frequentist estimation with robust SEs 
+# underestimates by .02 while Bayesian estimation overestimates it by the same 
+# amount. In other words, both methods estimate this effect quite well. There 
+# are differences between methods when it comes to the intercept and effect of 
+# gender, however. The true values for the intercept and the effect of Gender 
+# are 4.5 and 1 respectively, so we clearly see less bias in these estimates 
+# for the Bayesian approach
 
 ### Outliers -------------------------------------------------------------------
 
