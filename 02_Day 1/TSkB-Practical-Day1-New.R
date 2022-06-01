@@ -405,7 +405,54 @@ summary(fit3_b)
 ## 7.7 Scenario 2: Dose Effect
 #------------------------------------------------------------------------------#
 
-#### Answer questions 6 to 11. 
+#### Run the following code to answer questions 6 to 11: 
+
+
+#### Fit model binomial scenario 2a---------------------------------------------
+fit6_a1 <- glm(cbind(count_2a, 10 - count_2a) ~ dose, 
+              family = binomial, 
+              data = scenario_2) 
+summary(fit6_a1)
+coef(fit6_a1) # -2.017255 (intercept); 1.263172 (dose)
+exp(confint(fit6_a1))
+
+
+#### Fit model quasibinomial scenario 2a----------------------------------------
+
+fit6_a2 <- glm(cbind(count_2a, 10 - count_2a) ~ dose, 
+              family = quasibinomial, 
+              data = scenario_2) 
+summary(fit6_a2)
+coef(fit6_a2) # -2.017255 (intercept); 1.263172 (dose)
+exp(confint(fit6_a2))
+
+#### Fit model binomial scenario 2b---------------------------------------------
+
+fit6_b1 <- glm(cbind(count_2b, 10 - count_2b) ~ dose, 
+              family = binomial, 
+              data = scenario_2) 
+summary(fit6_b1)
+coef(fit6_b1) # -2.407117 (intercept); 1.461178 (dose)
+exp(confint(fit6_b1))
+
+#### Fit model quasibinomial scenario 2b----------------------------------------
+fit6_b2 <- glm(cbind(count_2b, 10 - count_2b) ~ dose, 
+              family = quasibinomial, 
+              data = scenario_2) 
+summary(fit6_b2)
+coef(fit6_b2) # -2.407117 (intercept); 1.461178 (dose)
+exp(confint(fit6_b2))
+
+#### Obtain average of deformed pups--------------------------------------------
+scenario_2 %>% 
+  summarise(mean_2a = mean(count_2a), sd_2a = sd(count_2a),
+            mean_2b = mean(count_2b), sd_2b = sd(count_2b) )
+
+#### Obtain CI_odds_ratio-------------------------------------------------------
+exp(confint(fit6_a1))
+exp(confint(fit6_a2))
+exp(confint(fit6_b1))
+exp(confint(fit6_b2))
 
 #### A6: Probabilities are .517 and .567 for scenarios 1a and 1b, and those 
 ####     probabilities are assumed to apply to every dam (no matter the dosage 
