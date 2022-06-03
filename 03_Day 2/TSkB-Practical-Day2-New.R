@@ -1,9 +1,11 @@
 #==============================================================================#
-# Day 2: Practical 1.1
+# Day 2: Practical Parts 3, 4, and 5
 #==============================================================================#
 
+#################### Part 3: Complete Multilevel Analysis ######################
+
 #------------------------------------------------------------------------------#
-## Exercise 2a Steps of a multilevel analysis
+## Exercise 3 Steps of a multilevel analysis
 #------------------------------------------------------------------------------#
 
 ### Packages required for Practical --------------------------------------------
@@ -49,7 +51,7 @@ library(ICC)
 library(tidyverse)
 
 #------------------------------------------------------------------------------#
-## Exercise 1a Cross-level Interactions
+## Exercise 3a Cross-level Interactions
 #------------------------------------------------------------------------------#
 
 
@@ -191,7 +193,7 @@ summary(Regr4_ML2)
 
 
 #------------------------------------------------------------------------------#
-## Exercise 1b A Complete Multilevel Analysis
+## Exercise 3b A Complete Multilevel Analysis
 #------------------------------------------------------------------------------#
 
 # For this Assignment use the R-workspace AssignmentWorkspace.rdata
@@ -339,11 +341,11 @@ performance::r2(MaximumModel_Bayes)
 
 
 
-
+################# Part 4: Common Issues and Three-Level Models #################
 
 
 #------------------------------------------------------------------------------#
-## Exercise 1c Small level 2 N: Fixed Effects Models
+## Exercise 4a Small level 2 N: Fixed Effects Models
 #------------------------------------------------------------------------------#
 
 # Let's first run an multilevel analysis on data with on 3 level 2 units
@@ -416,7 +418,7 @@ InterceptsFE - InterceptsML
 # but the rank ordering is pretty similar.
 
 #------------------------------------------------------------------------------#
-## Exercise 1d 3-level data
+## Exercise 4b 3-level data
 #------------------------------------------------------------------------------#
 
 as_tibble(nurses)
@@ -522,8 +524,11 @@ summary(MaximumModel_3lv)
 # Woman experience less stress than males, more experience leads to less
 # stress, and the experimental condition leads to less stress.
 
+
+########################### Part 5: Cross-Nested Data ##########################
+
 #------------------------------------------------------------------------------#
-## Exercise 1e Cross-Classified Data
+## Exercise 5 Cross-Classified Data
 #------------------------------------------------------------------------------#
 
 as_tibble(pupcross)
