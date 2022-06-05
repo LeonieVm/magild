@@ -2,7 +2,7 @@
 # Day 2: Practical Parts 3, 4, and 5
 #==============================================================================#
 
-# For the three practical parts, use the R-workspace ExerciseWorkspace.rdata    #the name is not in line with the name in the folder
+# For the three practical parts, load Workspace-TSkB-Practical-Day2-Def.RData.
 
 ### Packages required for Practical --------------------------------------------
 
@@ -284,12 +284,7 @@ MaximumModel_Bayes <- brm(Popular ~ 1 + Gender + Extraversion +
                           control = list(adapt_delta = 0.9), Total)
 summary(MaximumModel_Bayes)
 
-performance::icc(MaximumModel_Bayes)                                            #add explanation
-performance::r2(MaximumModel_Bayes)
-                                                                                #add conclusion
-
-                                                                                #will you say something about adjusted and conditional ICC in the lecture?
-
+                                                                                #add code posterior/conclusion
 
 ################# Part 4: Common Issues and Three-Level Models #################
 
