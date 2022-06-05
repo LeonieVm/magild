@@ -268,8 +268,8 @@ qqnorm(ranef(FixedEffects)$Class[,1])
 # In Assignment 1, we built the model step by step. As mentioned in 
 # the lecture, this is one way of running an analysis. Alternatively, you can 
 # run the full model immediately. This is called the maximum approach.
-# Run the full model in one go and check for explained variances etc. Does your 
-# conclusion differ from the one you drew based on Assignment 1?
+# Run the full model in one go. Does your conclusion differ from the conclusion
+# you drew based on Assignment 1?
 
 
 MaximumModel <- lmer(Popular ~ 1 + Gender + Extraversion +                      #add comments (e.g., why we use bayes here and not before)
