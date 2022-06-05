@@ -70,8 +70,8 @@ library(tidyverse)
 #       popular (continuous: higher scores indicate higher popularity)
 #------------------------------------------------------------------------------#
 
-#------------------------------------------------------------------------------#
-## Exercise 3a Centering                                                        #check if you want to call it differently
+#------------------------------------------------------------------------------#check if you want to call it differently
+### Exercise 3a Centering------------------------------------------------------- 
 #------------------------------------------------------------------------------#
 
 #### Assignment 1 --------------------------------------------------------------
@@ -157,7 +157,7 @@ coef(summary(Regr6_ML)) #this gives you the fixed effects
 coef(summary(Regr6_ML2))
 
 #------------------------------------------------------------------------------#
-## Exercise 3b A Complete Multilevel Analysis
+### Exercise 3b A Complete Multilevel Analysis----------------------------------
 #------------------------------------------------------------------------------#
 
 #### Assignment 1 --------------------------------------------------------------
@@ -239,7 +239,7 @@ rand(RandomEffectsExtraversion)
 # No! There is no random slope, so you don't need to add a cross-level 
 # interaction.
 
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Moved this from above. Does it  fit?
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Moved this from above. Does it  fit? although they also see on day 3
 # # What happens if you do add a cross-level interaction when there is no
 # # random slope?
 # 
@@ -271,7 +271,6 @@ qqnorm(ranef(FixedEffects)$Class[,1])
 # Run the full model in one go. Does your conclusion differ from the conclusion
 # you drew based on Assignment 1?
 
-
 MaximumModel <- lmer(Popular ~ 1 + Gender + Extraversion +                      #add comments (e.g., why we use bayes here and not before)
                        teacherExp + 
                        (1 + Gender + Extraversion | Class), Total)
@@ -289,7 +288,7 @@ summary(MaximumModel_Bayes)
 ################# Part 4: Common Issues and Three-Level Models #################
 
 #------------------------------------------------------------------------------#
-## Exercise 4a Small level 2 N: Fixed Effects Models
+### Exercise 4a Small level 2 N: Fixed Effects Models---------------------------
 #------------------------------------------------------------------------------#
 
 #### Assignment 1 --------------------------------------------------------------
@@ -369,7 +368,7 @@ InterceptsFE - InterceptsML
 # but the rank ordering is pretty similar.
 
 #------------------------------------------------------------------------------#
-## Exercise 4b 3-level data
+### Exercise 4b 3-level data----------------------------------------------------
 #------------------------------------------------------------------------------#
 
 #------------------------------------------------------------------------------#
