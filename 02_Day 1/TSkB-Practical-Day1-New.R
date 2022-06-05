@@ -2,6 +2,8 @@
 # Day 1: Practical Parts 1 & 2
 #==============================================================================#
 
+# For Parts 1 & 2, load the R-workspace Workspace-TSkB-Practical-Day1.RData
+
 ### Packages required for Practical --------------------------------------------
 
 #install.packages("tidyverse")
@@ -54,8 +56,6 @@ library(ggthemes)
 #------------------------------------------------------------------------------#
 
 #------------------------------------------------------------------------------#
-# For this Assignment use the R-workspace ExerciseWorkspace.rdata
-
 # These assignments are about a study on the popularity of highschool students. 
 # A total of 246 students from 12 different classes took part in this study in 
 # which we determined how extraversion, gender, and teacher experience 
