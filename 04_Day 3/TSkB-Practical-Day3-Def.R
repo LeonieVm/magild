@@ -1,10 +1,8 @@
 #==============================================================================#
-# Day 2: Practical 1.1
+# Day 3: Practical Part 6
 #==============================================================================#
 
-#------------------------------------------------------------------------------#
-## Exercise 2a Steps of a multilevel analysis
-#------------------------------------------------------------------------------#
+# For the practical, you have to load Workspace-TSkB-Practical-Day3-Def.RData.
 
 ### Packages required for Practical --------------------------------------------
 
@@ -51,57 +49,54 @@ library(mlVAR)
 library(tidyverse)
 
 #------------------------------------------------------------------------------#
-## Exercise 1a Longitudinal Data
-#------------------------------------------------------------------------------#
-as_tibble(gpa)
-
+### Exercise 6a Longitudinal Data-----------------------------------------------
 #------------------------------------------------------------------------------#
 
+#------------------------------------------------------------------------------#
 # The dataset "gpa"  contains longitudinal data set on 200 college students. 
-# The students'grade point average (GPA) has been recorded for six successive 
+# The students' grade point average (GPA) has been recorded for six successive 
 # semesters. At the same time, it was recorded whether the student held a job 
 # in that semester, and for how many hours. This is recorded in a variable 
 # 'job' (= hours worked). Finally, we also have the student-level variables 
 # high school GPA and gender (0 = male, 1 = female)
 #------------------------------------------------------------------------------#
 
-# Assignment 1:
-# Go through all the steps of a multilevel analysis (yes even though you 
+as_tibble(gpa)
+
+#### Assignment 1 --------------------------------------------------------------
+# Go through all the steps of a multilevel analysis (yes, even though you should
 # use a maximum model). Calculate the ICC and the  amount of explained variance 
 # in each step.
 
 # Start with the intercept only model in which you use Popular as the dependent 
 # variable, and calculate the ICC. Also determine if multilevel analysis is 
-# necessary. If needed ask for instruction using ?lme
+# necessary. If needed, ask for instruction using ?lme
 
 IO <- lm(gpa ~ 1, gpa)
 IO_ML <- lmer(gpa ~ 1 + (1 | student), gpa)
 summary(IO_ML)
-rand(IO_ML)
-
-# Or instead of rand() you can use:
+rand(IO_ML)# Or, instead of rand(), you can use:
 anova(IO_ML,IO)
 
 summary(IO_ML)
 # The ICC is equal to 0.05714 /(0.05714 + 0.09759) = .3692
+# We can check this with 
 icc(IO_ML)
 
-
-# Now add the first level variable time to the model as a fixed effects. 
-# What is the explained variance on level 1 and level 2, what "weird result" 
-# do you notice? 
-# What could cause this?
-# What is  your conclusions about this  predictor.
+# Now, add the first level variable time to the model as a fixed effect. 
+# What is the explained variance on level 1 and level 2? What "weird result" 
+# do you notice? What could cause this? What is your conclusions about this 
+# predictor?
 
 Lvl1 <- lmer(gpa ~ 1 + time + (1 | student), gpa)
-
 summary(Lvl1)
-# Time  is significantly related to gpa
+# Time  is significantly related to gpa.
 
+# Now, we calculate the explained variances on Level 1 and 2:
 VarianceIO <- as.data.frame(VarCorr(IO_ML))
 VarianceLv1 <- as.data.frame(VarCorr(Lvl1))
 
-# Explained Variance on Level 1
+# Explained Variance on Level 1                                                 #explained by time
 (VarianceIO[2,4] - VarianceLv1[2,4])/ VarianceIO[2,4]
 # .4047
 
@@ -112,24 +107,27 @@ VarianceLv1 <- as.data.frame(VarCorr(Lvl1))
 # their time-scores than would be expected based on random sampling. Note
 # that with random measurement occasions, this would not be a problem
 
-# What should you do now?
-# Use the model WITH time as your reference model
+# What should you do now?                                                       
+# When adding more level 1 predictors, use the model WITH time as your reference 
+# model, and NOT the intercept only model! The same holds for calculating the
+# ICC.
 
-# The ICC is equal to 0.06372/(0.06372 + 0.05809) = .5231
-icc(Lvl1)
+# Calculate the ICC
+summary(Lvl1)
+# The ICC is equal to 0.06372/(0.06372 + 0.05809) = .5231                       #clarify: is the previous ICC incorrect then?
+icc(Lvl1) # Always look at the "Adjusted ICC"                                   #add a "because"?
 
-# Now add the first level variable job to the model as a fixed effects. 
+# Now, add the first level variable job to the model as a fixed effects. 
 # What is the explained variance on level 1 and level 2?
 # What is  your conclusions about this  predictor
 
 Lvl1_2 <- lmer(gpa ~ 1 + time + job + (1 | student), gpa)
-
 summary(Lvl1_2)
 # job  is significantly related to gpa
 
 VarianceLv1_2 <- as.data.frame(VarCorr(Lvl1_2))
 
-# Explained Variance on Level 1
+# Explained Variance on Level 1                                                 #same as in lab 2: "additional" one? or the variance explained by job?
 (VarianceLv1[2,4] - VarianceLv1_2[2,4])/ VarianceLv1[2,4]
 # .049
 
@@ -137,9 +135,7 @@ VarianceLv1_2 <- as.data.frame(VarCorr(Lvl1_2))
 (VarianceLv1[1,4] - VarianceLv1_2[1,4])/ VarianceLv1[1,4]
 # .172
 
-
-
-# Now add the second level variables to the model.
+# Now, add the second level variables to the model.
 # What is the explained variance on level 2, and what are your 
 # conclusions about these predictors?
 
@@ -149,12 +145,11 @@ summary(FixedEffects)
 # All level 2 variables except highgpa are significantly related to gpa
 VarianceFE <- as.data.frame(VarCorr(FixedEffects))
 
-
-# Explained Variance on Level 2
+# Explained Variance on Level 2                                                 #add a not that reference could also be the model including all predictors.
 (VarianceLv1[1,4] - VarianceFE[1,4])/ VarianceLv1[1,4]
 # .6934
 
-# Now check if the relation between the first level predictors and gpa 
+# Now, check if the relation between the first level predictors and gpa 
 # is the same across students What type of effect do you need to add for test 
 # this hypotheses? And is this effect significant?
 
@@ -162,15 +157,15 @@ VarianceFE <- as.data.frame(VarCorr(FixedEffects))
 RandomEffects <- lmer(gpa ~ 1 + time + job + sex + highgpa + admitted +
                               (1 + time + job | student), gpa)
 rand(RandomEffects) 
-summary(RandomEffects)
+summary(RandomEffects)# or extract the relevant results with
+VarCorr(RandomEffects) #this gives you the random effects
+coef(summary(RandomEffects)) #this gives you the fixed effects
 
-# Both level 1 predictor have a random slope, but the amount of variance
-# across students is very small
+# Both level 1 predictors have a random slope, but the amount of variance       #so it's a matter f sample size?
+# across students is very small.
 
-# Finally decide if you need to add a cross-level interaction?
-
-# You can! There are random slopes   
-
+# Finally, should we add a cross-level interaction?
+# You can! There are random slopes.   
 
 # Run a final model where you use gender to explain differences in the slopes
 # of time and job across students. What is your conclusion?
@@ -179,10 +174,12 @@ CrossLevel <- lmer(gpa ~ 1 + time + job + sex + highgpa + admitted +
                         (1 + time + job | student), gpa)
 summary(CrossLevel)
 
-# There is a gender difference in the increase of gpa across time with girls
+# There is a gender difference in the increase of gpa across time with girls    #say something on why ignoring the time/sex interaction?
 # improving more. Gender does not influence the effect of job on gpa.
 
-### Finally check the assumptions
+#### Assignment 2 --------------------------------------------------------------
+# Check the assumptions for the model including cross-level 
+# interactions.
 
 # For level 1
 hist(residuals(CrossLevel))
@@ -197,23 +194,22 @@ qqnorm(ranef(CrossLevel)$student[,1])
 qqnorm(ranef(CrossLevel)$student[,2])
 qqnorm(ranef(CrossLevel)$student[,3])
 
-# Now lets approach this like we normally wood. Start with figures.
 
+# Now, let's approach this like we normally would. Start with figures.
 
-#### J-P and Niall plots
-
+# J-P and Niall plots
 ggplot(data      = gpa,
        aes(x     = time,
            y     = gpa,
            col   = student,
-           group = student))+ #to add the colours for different classes
+           group = student))+ #to add the colors for different classes
   geom_point(size     = 1.2,
              alpha    = .8,
              position = "jitter")+ #to add some random noise for plotting
   theme_minimal()+
   theme(legend.position = "none")+
   scale_color_gradientn(colours = rainbow(100))+
-  geom_smooth(method = lm,
+  geom_smooth(method = lm,                                                      #easier like this then estimating model first?
               se     = FALSE,
               size   = .5, 
               alpha  = .8)+ # to add regression line
@@ -222,12 +218,11 @@ ggplot(data      = gpa,
 
 
 # Some variation in time evident
-
 ggplot(data      = gpa,
        aes(x     = job,
            y     = gpa,
            col   = student,
-           group = student))+ #to add the colours for different classes
+           group = student))+ #to add the colors for different classes
   geom_point(size     = 1.2,
              alpha    = .8,
              position = "jitter")+ #to add some random noise for plotting
@@ -242,28 +237,27 @@ ggplot(data      = gpa,
        subtitle = "add colours for different students and regression lines")
 
 # Something is clearly weird with job. It appears to be an ordinal variable 
-# more than a continuous one. Some evidence of different slope there too
+# more than a continuous one. There is also some evidence of different slopes.  #check/why split?
 # We've been assuming job has a monotone effect but let's do it properly
 
 gpa$job_cat <- as.ordered(gpa$job)
 
-
-# Maximum approach: Run the full model in one go and check for explained
+#### Assignment 3 --------------------------------------------------------------
+# Maximum approach: Run the full model in one go (using the ordinal variable 
+# job_cat). Start with checking the assumptions, and then check for explained 
 # variances etc. Does your conclusion differ from the one you drew based on 
-# the Assignments above?
+# Assignment 1?
 
 MaximumModel_Bayes <- brm(gpa ~ 1 + time + mo(job_cat) + sex + highgpa + 
                             admitted +(1 + time + mo(job_cat) | student), 
                           iter = 5000,
                           control = list(adapt_delta = 0.8), gpa)
 
-
 # Check level 1 Residuals
 hist(residuals(MaximumModel_Bayes))
 qqnorm(residuals(MaximumModel_Bayes))
 
 # Check level 2 Residuals
-
 hist(ranef(MaximumModel_Bayes)$student[,,1][,1])
 hist(ranef(MaximumModel_Bayes)$student[,,2][,1])
 hist(ranef(MaximumModel_Bayes)$student[,,3][,1])
@@ -272,8 +266,7 @@ qqnorm(ranef(MaximumModel_Bayes)$student[,,1][,1])
 qqnorm(ranef(MaximumModel_Bayes)$student[,,2][,1])
 qqnorm(ranef(MaximumModel_Bayes)$student[,,3][,1])
 
-# Look ok, now look at results
-
+# Looks okay. Now, look at results.
 summary(MaximumModel_Bayes)
 
 # Results are pretty similar to the lmer results, but there really is hardly 
@@ -282,7 +275,7 @@ summary(MaximumModel_Bayes)
 
 
 #------------------------------------------------------------------------------#
-## Exercise 2 AR-Residuals 
+## Exercise 6b AR-Residuals-----------------------------------------------------
 #------------------------------------------------------------------------------#
 
 # For speed purposes, let's only focus on time and highgpa for the following
@@ -350,7 +343,7 @@ summary(GrowthModel_Bayes_AR)
 
 
 #------------------------------------------------------------------------------#
-## Exercise 3 Intensive Longitudinal Data
+### Exercise 6c Intensive Longitudinal Data-------------------------------------
 #------------------------------------------------------------------------------#
 
 # Data on 2 variables for 100 individuals each measured 50 times.
@@ -380,7 +373,7 @@ sd(GrowthModel_Bayes_ARRes2$fit@sim$samples[[4]]$`ar[1]`) # .03
 # the predicted scores from the observed ones. Kind of like cnetering, but now
 # with predicted scores (based on the regression line) instead of simple means.
 
-# Now let's use a simple AR model again. We'll use variable Y1 
+# Now, let's use a simple AR model again. We'll use variable Y1 
 
 AR1 <- brm(Y1 ~ Y1lag + (1 + Y1lag | individual), 
            iter = 5000, data = VARData)
@@ -407,7 +400,7 @@ summary(AR1_c)
 # our own code...or you should come see me ;)
 
 
-# Now we typically want to model several longitudinal variables at the same 
+# Now, we typically want to model several longitudinal variables at the same 
 # time. This can be done with VAR models, which are  multivariate
 # AR models.
 
@@ -424,7 +417,7 @@ bform1 <-
 VAR <- brm(bform1, data = VARData, iter = 5000, chains = 2, cores = 2)
 summary(VAR)
 
-### Finally, lets look at longitudinal network models....and let's just use 
+### Finally, let's look at longitudinal network models....and let's just use 
 # our VAR data. This could be seen as a network of only two nodes after 
 # all. Do you see a difference between the network and the VAR model?
 
