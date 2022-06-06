@@ -243,9 +243,9 @@ ggplot(data      = gpa,
 gpa$job_cat <- as.ordered(gpa$job)
 
 #### Assignment 3 --------------------------------------------------------------
-# Maximum approach: Run the full model in one go (using the ordinal variable 
-# job_cat). Start with checking the assumptions, and then check for explained 
-# variances etc. Does your conclusion differ from the one you drew based on 
+# Maximum approach: Run the full model in one go (using the ordinal variable    #remove part on explained variance or add the code
+# job_cat). Start with checking the assumptions, and then check for explained   #add that you compare back to random slopes one
+# variances etc. Does your conclusion differ from the one you drew based on    
 # Assignment 1?
 
 MaximumModel_Bayes <- brm(gpa ~ 1 + time + mo(job_cat) + sex + highgpa + 
@@ -254,8 +254,8 @@ MaximumModel_Bayes <- brm(gpa ~ 1 + time + mo(job_cat) + sex + highgpa +
                           control = list(adapt_delta = 0.8), gpa)
 
 # Check level 1 Residuals
-hist(residuals(MaximumModel_Bayes))
-qqnorm(residuals(MaximumModel_Bayes))
+hist(residuals(MaximumModel_Bayes)[,1])
+qqnorm(residuals(MaximumModel_Bayes)[,1])
 
 # Check level 2 Residuals
 hist(ranef(MaximumModel_Bayes)$student[,,1][,1])
@@ -267,9 +267,12 @@ qqnorm(ranef(MaximumModel_Bayes)$student[,,2][,1])
 qqnorm(ranef(MaximumModel_Bayes)$student[,,3][,1])
 
 # Looks okay. Now, look at results.
-summary(MaximumModel_Bayes)
+summary(MaximumModel_Bayes)                                                     #say something about simplex parameters
+summary(RandomEffects)
+VarCorr(RandomEffects) #this gives you the random effects
+coef(summary(RandomEffects)) #this gives you the fixed effects
 
-# Results are pretty similar to the lmer results, but there really is hardly 
+# Results are pretty similar to the lmer results, but there really is hardly    #clarify the text more.
 # any variation in effect of job. Could now indeed at crosslevel interactions
 # for time
 
