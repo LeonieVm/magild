@@ -286,9 +286,9 @@ coef(summary(RandomEffects)) #this gives you the fixed effects
 
 # First, let's run a normal growth model
 GrowthModel_Bayes <- brm(gpa ~ 1 + time + highgpa +
-                            (1 + time | student), 
-                          iter = 2000,
-                          control = list(adapt_delta = 0.8), gpa)
+                           (1 + time | student), 
+                         iter = 2000,
+                         control = list(adapt_delta = 0.8), gpa)
 
 summary(GrowthModel_Bayes)
 
@@ -299,25 +299,26 @@ summary(GrowthModel_Bayes)
 #GMAR <- bf(gpa ~ 1 + time + highgpa + (1 + time | student), 
 #           autocor = ~ ar(p = 1))
 
-#GrowthModel_Bayes_ARRes <- brm(GMAR, iter = 2000,
+#GrowthModel_Bayes_ARRes <- brm(GMAR, 
+#                            iter = 2000,
 #                            control = list(adapt_delta = 0.8), gpa)
 
 
 GrowthModel_Bayes_ARRes <- brm(gpa ~ 1 + time + highgpa + ar(p = 1) +
-                           (1 + time | student), 
-                         iter = 2000,
-                         control = list(adapt_delta = 0.8), gpa)
+                                 (1 + time | student), 
+                               iter = 2000,
+                               control = list(adapt_delta = 0.8), gpa)
 
-summary(GrowthModel_Bayes_ARRes)
+summary(GrowthModel_Bayes_ARRes)                                                
 
-# There is no mention of the AR at all!! Because it's considered a nuisance
-#  It is there though!
+# There is no mention of the AR at all!! Because it's considered a nuisance     #say something about difference in other parameters
+# It is there though!
 
 
 mean(GrowthModel_Bayes_ARRes$fit@sim$samples[[4]]$`ar[1]`) # .08
 sd(GrowthModel_Bayes_ARRes$fit@sim$samples[[4]]$`ar[1]`) # .08
 
-# So we see there is little autocorrelation in this data (which makes sense 
+# So, we see there is little autocorrelation in this data (which makes sense 
 # given the sampling frequency in the data). For Intensive longitudinal data
 # the AR will tend to be higher :).
 
@@ -325,14 +326,14 @@ sd(GrowthModel_Bayes_ARRes$fit@sim$samples[[4]]$`ar[1]`) # .08
 # variable and add it as a predictor.
 
 gpa <- gpa %>%
-       group_by(student) %>%
-       mutate(gpa_L = lag(gpa, order_by=student))
+  group_by(student) %>%
+  mutate(gpa_L = lag(gpa, order_by=student))
 
 
-GrowthModel_Bayes_AR <- brm(gpa ~ 1 + time + highgpa + gpa_L +
-                                 (1 + time | student), 
-                               iter = 5000,
-                               control = list(adapt_delta = 0.8), gpa)
+GrowthModel_Bayes_AR <- brm(gpa ~ 1 + time + highgpa + gpa_L +                  # perhaps add the note about "accounting for" versus modeling?
+                              (1 + time | student), 
+                            iter = 5000,
+                            control = list(adapt_delta = 0.8), gpa)
 
 summary(GrowthModel_Bayes_AR)
 
@@ -358,12 +359,12 @@ summary(GrowthModel_Bayes_AR)
 # Let's start with a growth curve model again
 
 # This model takes a longtime to run, so the results are already in the
-# R workspace
+# R workspace. The code is the following:
 
-GrowthModel_Bayes_ARRes2 <- brm(Y1 ~ 1 + time + ar(p = 1) +
-                                (1 + time | individual), 
-                               iter = 2000,
-                               control = list(adapt_delta = 0.8), VARData)
+# GrowthModel_Bayes_ARRes2 <- brm(Y1 ~ 1 + time + ar(p = 1) +
+#                                   (1 + time | individual), 
+#                                 iter = 2000,
+#                                 control = list(adapt_delta = 0.8), VARData)
 
 summary(GrowthModel_Bayes_ARRes2)
 
@@ -372,8 +373,8 @@ sd(GrowthModel_Bayes_ARRes2$fit@sim$samples[[4]]$`ar[1]`) # .03
 
 # Clearly there is no systematic change over time, but there is a substantial
 # amount of autocorrelation. Since there is no trend, we can use AR models.
-# If there were a trend, we would have to "get rid of it" first, by subtracting
-# the predicted scores from the observed ones. Kind of like cnetering, but now
+# If there was a trend, we would have to "get rid of it" first, by subtracting
+# the predicted scores from the observed ones. Kind of like centering, but now  #add what happens if we don't do that?
 # with predicted scores (based on the regression line) instead of simple means.
 
 # Now, let's use a simple AR model again. We'll use variable Y1 
@@ -383,7 +384,7 @@ AR1 <- brm(Y1 ~ Y1lag + (1 + Y1lag | individual),
 summary(AR1)
 
 # You'll see that the intercept isn't close to the actual value of 4!
-# This is because the intercept in AR models can't be interpreted as a mean.
+# This is because the intercept in AR models can't be interpreted as a mean.    # but as...what?
 # If we want means, we need to group-mean center.
 
 VARData <- VARData %>%
@@ -399,7 +400,7 @@ AR1_c <- brm(Y1 ~ Y1lag_c + (1 + Y1lag_c | individual ),
 summary(AR1_c)
 
 # Much better ;). Although using sample means to group mean center isn't ideal
-# We can use estimates of the individual means, but than we have to right
+# We can use estimates of the individual means, but than we have to write
 # our own code...or you should come see me ;)
 
 
@@ -431,10 +432,10 @@ LongNet <- mlVAR(VARData[, c(1:3)], vars = c("Y1", "Y2"),
 
 summary(LongNet)
 plot(LongNet)
-  
+
 # The network model isn't doing "true" multilevel! It's calculating person 
 # means based on the sample data and subtracting those from the observations
-# to person-center the data. Then a network is fitted to the group-means to
+# to person-center the data. Then, a network is fitted to the group-means to
 # model level 2 (but without taking the amount of observations an individual 
 # has into account. A mean of someone with 10 observations is treated the same
 # as the mean of someone with 100 observations). The group-mean centered data
@@ -458,4 +459,4 @@ plot(LongNet)
 # different (but highly similar) ways, and which methods is best depends on
 # you research question etc. Even if you go for a VAR model though, networks
 # are always a good place to start because of their nice visualization of the
-# data (in ways relevant to VAR models)
+# data (in ways relevant to VAR models).
