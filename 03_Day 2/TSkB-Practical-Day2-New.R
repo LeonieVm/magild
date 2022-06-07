@@ -247,8 +247,8 @@ rand(RandomEffectsExtraversion)
 # No! There is no random slope, so you don't need to add a cross-level 
 # interaction.
 
-# # What happens if you do add a cross-level interaction when there is no
-# # random slope?
+# What happens if you do add a cross-level interaction when there is no
+# random slope?
 
 
 #### Assignment 2 --------------------------------------------------------------
@@ -277,7 +277,7 @@ summary(MaximumModel)
 
 # The maximum approach can be difficult for frequentist estimation because of
 # the complexity of the model. This is why I prefer to use Bayesian statistics
-# with it. It's more stable, and if there is a problem, it's easier to pinpoint
+# with it. It's more stable, and if there is a problem, it's easier to pinpoint.
 
 MaximumModel_Bayes <- brm(Popular ~ 1 + Gender + Extraversion + 
                             teacherExp + 
@@ -297,10 +297,10 @@ get_variables(MaximumModel_Bayes)
 SdInt<- MaximumModel_Bayes %>%
   spread_draws(sd_Class__Intercept)
 
-# Check the probability thet the intercept  variance is smaller than the smallest
+# Check the probability thet the intercept variance is smaller than the smallest
 # value of interest (e.g., .02)
 sum((SdInt$sd_Class__Intercept)^2 < .02)/length(SdInt$sd_Class__Intercept)
-# 0% chance that the slope-variance is smaller than .01, so there is
+# 0% chance that the intercept-variance is smaller than .02, so there is
 # definitely variance in the intercept.
 
 # Extract entire distribution of the random-slope for Gender
@@ -310,7 +310,7 @@ SdGender <- MaximumModel_Bayes %>%
 # Check the probability thet the slope variance is smaller than the smallest
 # value of interest (e.g., .02)
 sum((SdGender$sd_Class__Gender)^2 < .02)/length(SdGender$sd_Class__Gender)
-# 67.53% chance that the slope-variance is smaller than .01
+# approx. 67% chance that the slope-variance is smaller than .02
 
 # Extract entire distribution of the random-slope for Extraversion
 SdExtra <- MaximumModel_Bayes %>%
@@ -320,7 +320,7 @@ SdExtra <- MaximumModel_Bayes %>%
 # value of interest (e.g., .02)
 sum((SdExtra$sd_Class__Extraversion)^2 < .02)/
   length(SdExtra$sd_Class__Extraversion)
-# 40.50% chance that the slope-variance is smaller than .01
+# approx. 40% chance that the slope-variance is smaller than .02
 
 # So random slope variances are really small, which is why we won't model
 # them further.                                                                
@@ -370,7 +370,7 @@ summary(FE_SN2)
 
 # Can you explain why?
 # The dummies capture all level 2 differences, including the ones caused by
-# differences in teacherExp, so the predictor is perfectly collinear with the
+# differences in teacherExp, so the predictor is perfectly colinear with the
 # class dummies. In other words, all differences between classes due to 
 # differences in teacherExp are already accounted for by the differences
 # between the estimated means of each class. Adding the teacherExp
@@ -503,7 +503,7 @@ summary(ML_3lv2)
 rand(ML_3lv2)# Yes it does, as the random-slope variance in the effect of 
 # condition is significantly different from 0.
 
-# Now, run the maximum-model (like you should ;)), what are your conclusions?    #is something missing here?
+# Now, run the maximum-model (like you should ;)), what are your conclusions?   
 
 MaximumModel_3lv <- brm(stress ~ 1 + gender + experien + condition + wardtype + 
                           hospsize 
@@ -515,7 +515,7 @@ summary(MaximumModel_3lv)
 
 # No differences between hospitals in the effects of gender or experience,
 # but there are differences in average stress and the effects of condition and 
-# wardtype
+# wardtype.
 
 # No differences between wards in the effects of gender or experience,
 # but there are differences in average stress.
@@ -610,7 +610,3 @@ summary(MaximumModel_CR)
 # Girls have higher achievement than boys and higher SES is associated with
 # higher achievement. There is no "significant"  effect of denomination for 
 # either primary or secondary schools.
-
-
-
-
