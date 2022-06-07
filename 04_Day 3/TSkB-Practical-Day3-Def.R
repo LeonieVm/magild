@@ -96,11 +96,11 @@ summary(Lvl1)
 VarianceIO <- as.data.frame(VarCorr(IO_ML))
 VarianceLv1 <- as.data.frame(VarCorr(Lvl1))
 
-# Explained Variance on Level 1                                                 #explained by time
+# Explained Variance on Level 1 (compared to the intercept-only model)
 (VarianceIO[2,4] - VarianceLv1[2,4])/ VarianceIO[2,4]
 # .4047
 
-# Explained Variance on Level 2
+# Explained Variance on Level 2 (compared to the intercept-only model)
 (VarianceIO[1,4] - VarianceLv1[1,4])/ VarianceIO[1,4]
 # -.1152, explained variance can't be negative! This is because we have fixed
 # measurement occasions! There is way less variance between students in 
@@ -114,8 +114,7 @@ VarianceLv1 <- as.data.frame(VarCorr(Lvl1))
 
 # Calculate the ICC
 summary(Lvl1)
-# The ICC is equal to 0.06372/(0.06372 + 0.05809) = .5231                       #clarify: is the previous ICC incorrect then?
-icc(Lvl1) # Always look at the "Adjusted ICC"                                   #add a "because"?
+# The ICC is equal to 0.06372/(0.06372 + 0.05809) = .5231                       
 
 # Now, add the first level variable job to the model as a fixed effects. 
 # What is the explained variance on level 1 and level 2?
@@ -127,11 +126,11 @@ summary(Lvl1_2)
 
 VarianceLv1_2 <- as.data.frame(VarCorr(Lvl1_2))
 
-# Explained Variance on Level 1                                                 #same as in lab 2: "additional" one? or the variance explained by job?
+# Explained Variance on Level 1 (compared to model with only time)                                               
 (VarianceLv1[2,4] - VarianceLv1_2[2,4])/ VarianceLv1[2,4]
 # .049
 
-# Explained Variance on Level 2
+# Explained Variance on Level 2 (compared to model with only time)   
 (VarianceLv1[1,4] - VarianceLv1_2[1,4])/ VarianceLv1[1,4]
 # .172
 
@@ -145,7 +144,8 @@ summary(FixedEffects)
 # All level 2 variables except highgpa are significantly related to gpa
 VarianceFE <- as.data.frame(VarCorr(FixedEffects))
 
-# Explained Variance on Level 2                                                 #add a not that reference could also be the model including all predictors.
+# Explained Variance on Level 2 (compared to the model with just level 1 
+# predictors)
 (VarianceLv1[1,4] - VarianceFE[1,4])/ VarianceLv1[1,4]
 # .6934
 
@@ -153,28 +153,26 @@ VarianceFE <- as.data.frame(VarCorr(FixedEffects))
 # is the same across students What type of effect do you need to add for test 
 # this hypotheses? And is this effect significant?
 
-# You need to add random slopes
+# You need to add random slopes.
 RandomEffects <- lmer(gpa ~ 1 + time + job + sex + highgpa + admitted +
-                              (1 + time + job | student), gpa)
+                        (1 + time + job | student), gpa)
 rand(RandomEffects) 
 summary(RandomEffects)# or extract the relevant results with
 VarCorr(RandomEffects) #this gives you the random effects
 coef(summary(RandomEffects)) #this gives you the fixed effects
 
-# Both level 1 predictors have a random slope, but the amount of variance       #so it's a matter f sample size?
-# across students is very small.
-
-# Finally, should we add a cross-level interaction?
-# You can! There are random slopes.   
+# Both level 1 predictors have a random slope, but the amount of variance       
+# across students is very small. We could add a cross-level interaction because
+# there are random slopes.   
 
 # Run a final model where you use gender to explain differences in the slopes
 # of time and job across students. What is your conclusion?
 CrossLevel <- lmer(gpa ~ 1 + time + job + sex + highgpa + admitted +
-                        time:sex + job:sex +
-                        (1 + time + job | student), gpa)
+                     time:sex + job:sex +
+                     (1 + time + job | student), gpa)
 summary(CrossLevel)
 
-# There is a gender difference in the increase of gpa across time with girls    #say something on why ignoring the time/sex interaction?
+# There is a gender difference in the increase of gpa across time with girls    
 # improving more. Gender does not influence the effect of job on gpa.
 
 #### Assignment 2 --------------------------------------------------------------
@@ -209,7 +207,7 @@ ggplot(data      = gpa,
   theme_minimal()+
   theme(legend.position = "none")+
   scale_color_gradientn(colours = rainbow(100))+
-  geom_smooth(method = lm,                                                      #easier like this then estimating model first?
+  geom_smooth(method = lm,                                                      
               se     = FALSE,
               size   = .5, 
               alpha  = .8)+ # to add regression line
@@ -237,16 +235,15 @@ ggplot(data      = gpa,
        subtitle = "add colours for different students and regression lines")
 
 # Something is clearly weird with job. It appears to be an ordinal variable 
-# more than a continuous one. There is also some evidence of different slopes.  #check/why split?
+# more than a continuous one. There is also some evidence of different slopes.  
 # We've been assuming job has a monotone effect but let's do it properly
 
 gpa$job_cat <- as.ordered(gpa$job)
 
 #### Assignment 3 --------------------------------------------------------------
-# Maximum approach: Run the full model in one go (using the ordinal variable    #remove part on explained variance or add the code
-# job_cat). Start with checking the assumptions, and then check for explained   #add that you compare back to random slopes one
-# variances etc. Does your conclusion differ from the one you drew based on    
-# Assignment 1?
+# Maximum approach: Run the full model in one go (using the ordinal variable    
+# job_cat). Start with checking the assumptions. Does your conclusion differ 
+# from the one you drew based on Assignment 1?
 
 MaximumModel_Bayes <- brm(gpa ~ 1 + time + mo(job_cat) + sex + highgpa + 
                             admitted +(1 + time + mo(job_cat) | student), 
@@ -267,14 +264,14 @@ qqnorm(ranef(MaximumModel_Bayes)$student[,,2][,1])
 qqnorm(ranef(MaximumModel_Bayes)$student[,,3][,1])
 
 # Looks okay. Now, look at results.
-summary(MaximumModel_Bayes)                                                     #say something about simplex parameters
+summary(MaximumModel_Bayes)                                                     
 summary(RandomEffects)
 VarCorr(RandomEffects) #this gives you the random effects
 coef(summary(RandomEffects)) #this gives you the fixed effects
 
-# Results are pretty similar to the lmer results, but there really is hardly    #clarify the text more.
-# any variation in effect of job. Could now indeed at crosslevel interactions
-# for time
+# Results are pretty similar to the lmer results, but there really is hardly    
+# any variation in effect of job. But we could now add cross-level interactions
+# for time.
 
 
 #------------------------------------------------------------------------------#
@@ -295,15 +292,6 @@ summary(GrowthModel_Bayes)
 
 # And now one with AR residuals. What do you notice?
 
-##Alternative but outdated code
-#GMAR <- bf(gpa ~ 1 + time + highgpa + (1 + time | student), 
-#           autocor = ~ ar(p = 1))
-
-#GrowthModel_Bayes_ARRes <- brm(GMAR, 
-#                            iter = 2000,
-#                            control = list(adapt_delta = 0.8), gpa)
-
-
 GrowthModel_Bayes_ARRes <- brm(gpa ~ 1 + time + highgpa + ar(p = 1) +
                                  (1 + time | student), 
                                iter = 2000,
@@ -311,9 +299,9 @@ GrowthModel_Bayes_ARRes <- brm(gpa ~ 1 + time + highgpa + ar(p = 1) +
 
 summary(GrowthModel_Bayes_ARRes)                                                
 
-# There is no mention of the AR at all!! Because it's considered a nuisance     #say something about difference in other parameters
-# It is there though!
-
+# There is no mention of the AR at all!! Because it's considered a nuisance     
+# It is there though! All other results are pretty similar. This is because 
+# there isn't a lot of autocorrelation. We can see that as follows:
 
 mean(GrowthModel_Bayes_ARRes$fit@sim$samples[[4]]$`ar[1]`) # .08
 sd(GrowthModel_Bayes_ARRes$fit@sim$samples[[4]]$`ar[1]`) # .08
@@ -322,7 +310,7 @@ sd(GrowthModel_Bayes_ARRes$fit@sim$samples[[4]]$`ar[1]`) # .08
 # given the sampling frequency in the data). For Intensive longitudinal data
 # the AR will tend to be higher :).
 
-# If we want to explicitly add the AR effect, we need to lag the dependent
+# If we want to explicitly model the AR effect, we need to lag the dependent
 # variable and add it as a predictor.
 
 gpa <- gpa %>%
@@ -330,7 +318,7 @@ gpa <- gpa %>%
   mutate(gpa_L = lag(gpa, order_by=student))
 
 
-GrowthModel_Bayes_AR <- brm(gpa ~ 1 + time + highgpa + gpa_L +                  # perhaps add the note about "accounting for" versus modeling?
+GrowthModel_Bayes_AR <- brm(gpa ~ 1 + time + highgpa + gpa_L +                  
                               (1 + time | student), 
                             iter = 5000,
                             control = list(adapt_delta = 0.8), gpa)
@@ -374,8 +362,9 @@ sd(GrowthModel_Bayes_ARRes2$fit@sim$samples[[4]]$`ar[1]`) # .03
 # Clearly there is no systematic change over time, but there is a substantial
 # amount of autocorrelation. Since there is no trend, we can use AR models.
 # If there was a trend, we would have to "get rid of it" first, by subtracting
-# the predicted scores from the observed ones. Kind of like centering, but now  #add what happens if we don't do that?
+# the predicted scores from the observed ones. Kind of like centering, but now  
 # with predicted scores (based on the regression line) instead of simple means.
+# If you don't do this, the estimated AR parameter will be biased. 
 
 # Now, let's use a simple AR model again. We'll use variable Y1 
 
@@ -384,7 +373,7 @@ AR1 <- brm(Y1 ~ Y1lag + (1 + Y1lag | individual),
 summary(AR1)
 
 # You'll see that the intercept isn't close to the actual value of 4!
-# This is because the intercept in AR models can't be interpreted as a mean.    # but as...what?
+# This is because the intercept in AR models can't be interpreted as a mean.    
 # If we want means, we need to group-mean center.
 
 VARData <- VARData %>%
