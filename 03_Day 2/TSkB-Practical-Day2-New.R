@@ -286,11 +286,11 @@ MaximumModel_Bayes <- brm(Popular ~ 1 + Gender + Extraversion +
 summary(MaximumModel_Bayes)
 
 # Conclusions with respect to fixed effects are similar. There is an effect
-# Gender and Extraversion but not teacherExp.
+# of gender and extraversion but not teacherExp.
 
-### Now for the random part
+# Now for the random part:
 
-# get names of parameters in the model
+# Get names of parameters in the model
 get_variables(MaximumModel_Bayes)
 
 # Extract entire distribution of the random-intercept variance
@@ -303,7 +303,7 @@ sum((SdInt$sd_Class__Intercept)^2 < .02)/length(SdInt$sd_Class__Intercept)
 # 0% chance that the intercept-variance is smaller than .02, so there is
 # definitely variance in the intercept.
 
-# Extract entire distribution of the random-slope for Gender
+# Extract entire distribution of the random-slope for gender
 SdGender <- MaximumModel_Bayes %>%
               spread_draws(sd_Class__Gender)
 
@@ -312,7 +312,7 @@ SdGender <- MaximumModel_Bayes %>%
 sum((SdGender$sd_Class__Gender)^2 < .02)/length(SdGender$sd_Class__Gender)
 # approx. 67% chance that the slope-variance is smaller than .02
 
-# Extract entire distribution of the random-slope for Extraversion
+# Extract entire distribution of the random-slope for extraversion
 SdExtra <- MaximumModel_Bayes %>%
               spread_draws(sd_Class__Extraversion)
 
@@ -479,7 +479,6 @@ Variance_3lv <- as.data.frame(VarCorr(IO_3lv))
 (Variance_3lv[1,4] + Variance_3lv[2,4] )/(Variance_3lv[1,4] + Variance_3lv[2,4] 
                                           + Variance_3lv[3,4])
 # 68.76% of the variance is on the ward and hospital levels
-performance::icc(IO_3lv)
 
 #### Assignment 2 --------------------------------------------------------------
 # Test if there is an effect of condition on stress controlling for all other
@@ -566,7 +565,9 @@ Variance_CR <- as.data.frame(VarCorr(IO_CR))
 # 8.87% of the variance is on the secondary school "level"  
 
 # Total variance on the higher levels
-performance::icc(IO_CR) # 31.70%
+(Variance_CR[1,4]+Variance_CR[2,4])/
+  (Variance_CR[1,4] + Variance_CR[2,4] + Variance_CR[3,4])
+# 31.70%
 
 # Can you tell how cross-classification is specified differently than nested
 # levels?
