@@ -48,7 +48,7 @@ library(tidyverse)
 
 #################### Part 3: Complete Multilevel Analysis ######################
 
-#------------------------------------------------------------------------------#  #moved the description ebcause the data is for all part 3
+#------------------------------------------------------------------------------#  
 # The assignments for Part 3 are about a study on the popularity of highschool 
 # students. A total of 246 students from 12 different classes took part in this 
 # study in which we determined how extraversion, gender, and teacher experience 
@@ -70,7 +70,7 @@ library(tidyverse)
 #       popular (continuous: higher scores indicate higher popularity)
 #------------------------------------------------------------------------------#
 
-#------------------------------------------------------------------------------#check if you want to call it differently
+#------------------------------------------------------------------------------#
 ### Exercise 3a Centering------------------------------------------------------- 
 #------------------------------------------------------------------------------#
 
@@ -129,7 +129,12 @@ plot(Mean[,2],Mean[,1])
 # Grand center the continuous level 1 predictor
 Total$Extraversion_c <- Total$Extraversion - mean(Total$Extraversion)
 
-# Grand Center the level 2 predictor                                            #add note that they cannot just take the overall mean and why
+# Grand Center the level 2 predictor
+# We're going to do this in two steps, because we can't use the raw teacherExp scores.
+# The reason for that is that each student has a teacherExp score in the datafile, while
+# teacherExp obviously is a class characteristic. So we'll first determine the
+# average teacherExp for each class (which is just the teacherExp score for that class),
+# and then calculate the average of those class-scores for centering.
 Teacher_Exp <- matrix(NA, ncol = 1, nrow = 12)
 
 for (i in 1:12) {
@@ -210,11 +215,11 @@ summary(FixedEffects)# Teacher experience is significantly related to popularity
 
 VarianceFE <- as.data.frame(VarCorr(FixedEffects))
 
-# Explained Variance on Level 1                                                 #adjust wording? additional explained variance?
+# Explained Variance on Level 1 (compared to model with just level 1 predictors)
 (VarianceLv1[2,4] - VarianceFE[2,4])/ VarianceLv1[2,4]
 # 0. No explained variance since you only added a level 2 predictor
 
-# Explained Variance on Level 2                                    
+# Explained Variance on Level 2 (compared to model with just level 1 predictors)                                   
 (VarianceLv1[1,4] - VarianceFE[1,4])/ VarianceLv1[1,4]
 # .2920
 
@@ -239,21 +244,12 @@ rand(RandomEffectsExtraversion)
 # No! There is no random slope, so you don't need to add a cross-level 
 # interaction.
 
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Moved this from above. Does it  fit? although they also see on day 3
 # # What happens if you do add a cross-level interaction when there is no
 # # random slope?
-# 
-# # Below we just add the cross-level interactions to illustrate the code!!
-# 
-# # Run a multilevel model with cross-level interaction
-# CL_interaction <- lmer(Popular ~ 1 + Gender + Extraversion + teacherExp +
-#                          Gender:teacherExp + Extraversion:teacherExp +
-#                          (1 + Gender + Extraversion | Class), data=Total)
-# summary(CL_interaction)
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 
 #### Assignment 2 --------------------------------------------------------------
-# We choose the FixedEffects model as the final model since there are no random         #adjusted this text
+# We choose the FixedEffects model as the final model since there are no random       
 # slopes. Check if the assumptions for the model are met .        
 
 # For level 1
@@ -271,11 +267,14 @@ qqnorm(ranef(FixedEffects)$Class[,1])
 # Run the full model in one go. Does your conclusion differ from the conclusion
 # you drew based on Assignment 1?
 
-MaximumModel <- lmer(Popular ~ 1 + Gender + Extraversion +                      #add comments (e.g., why we use bayes here and not before)
+MaximumModel <- lmer(Popular ~ 1 + Gender + Extraversion +                      
                        teacherExp + 
                        (1 + Gender + Extraversion | Class), Total)
 summary(MaximumModel)
 
+# The maximum approach can be difficult for frequentist estimation because of
+# the complexity of the model. This is why I prefer to use Bayesian statistics
+# with it. It's more stable, and if there is a problem, it's easier to pinpoint
 
 MaximumModel_Bayes <- brm(Popular ~ 1 + Gender + Extraversion + 
                             teacherExp + 
@@ -292,9 +291,11 @@ summary(MaximumModel_Bayes)
 #------------------------------------------------------------------------------#
 
 #### Assignment 1 --------------------------------------------------------------
-# Let's first run an multilevel analysis on data with on 3 level 2 units.
+# Let's first run an multilevel analysis on data with only 3 level 2 units.
+# For this we'll just use the data of the first three classes from the 
+# Total data.
 Multilevel_SN <- lmer(Popular ~ 1 + Gender + Extraversion + 
-                        (1 | Class), Total_SN)                                  #say something about what data that is?
+                        (1 | Class), Total_SN)                                 
 
 summary(Multilevel_SN)
 # Why is the above analysis not recommended?
@@ -305,10 +306,12 @@ FE_SN <- lm(Popular ~ 0 + factor(Class) + Gender + Extraversion,
             data = Total_SN)
 summary(FE_SN)
 
-# What does the "0" do in the code above?                                       #add something about cell-means coding?
+# What does the "0" do in the code above?  
+# We use this approach to get estimates of the means of each class in our
+# output.
 
 #### Assignment 2 --------------------------------------------------------------
-# Now, let's add a level 2 predictor for both the multilevel analysis and the     #clarified a bit here
+# Now, let's add a level 2 predictor for both the multilevel analysis and the     
 # fixed effect model.
 
 # Multilevel model
@@ -327,7 +330,10 @@ summary(FE_SN2)
 # Can you explain why?
 # The dummies capture all level 2 differences, including the ones caused by
 # differences in teacherExp, so the predictor is perfectly collinear with the
-# class dummies.                                                                #add info that the variable predicts means in lmer?
+# class dummies. In other words, all differences between classes due to 
+# differences in teacherExp are already accounted for by the differences
+# between the estimated means of each class. Adding the teacherExp
+# to the model therefore is like adding the same predictor twice.
 
 #### Assignment 4 --------------------------------------------------------------
 #Now, let's add cross-level interaction.
@@ -344,7 +350,7 @@ FE_SN3 <- lm(Popular ~ 0 + factor(Class) + Gender + Extraversion
 summary(FE_SN3)
 
 # Let's also run both options for the cross-level interaction on the larger 
-# dataset.                                                                   #be more specific and say with the 12 classes?
+# dataset with 12 classes.                                                                  
 
 # Multilevel model
 Multilevel_SN4 <- lmer(Popular ~ 1 + Gender + Extraversion + teacherExp + 
@@ -352,9 +358,15 @@ Multilevel_SN4 <- lmer(Popular ~ 1 + Gender + Extraversion + teacherExp +
                        Total)
 summary(Multilevel_SN4)
 # Fixed effects model
-FE_SN4 <- lm(Popular ~ 0 + factor(Class) + Gender + Extraversion                #can you say a bit about the meaning of having an interaction term without main effect?
+FE_SN4 <- lm(Popular ~ 0 + factor(Class) + Gender + Extraversion                
              + Extraversion:teacherExp, data=Total)
 summary(FE_SN4)
+
+# Notice that we add an interaction term between Extraversion and teacherExp 
+# without also adding the main effect of teacherExp (explicitly). This is weird 
+# and something you normally should not do! But...the main effect of
+# teacherExp is in the model! Remember that it is part of the difference
+# between the means of each class.
 
 # Compare the individual intercepts of the multilevel model to the dummy scores
 # from the fixed effect model. What do you notice?
@@ -395,7 +407,7 @@ InterceptsFE - InterceptsML
 as_tibble(nurses)
 
 #### Assignment 1 --------------------------------------------------------------
-# Run an intercept-only model. Use:                                               #I restructured the order
+# Run an intercept-only model. Use:                                               
 IO_3lv <- lmer(stress ~ 1  + (1 | hospital/wardid), nurses)
 summary(IO_3lv)
 # OR
@@ -438,7 +450,7 @@ summary(ML_3lv)
 # Are all predictors correctly assigned to the different levels? So, gender and
 # experience as level 1 predictors, condition and wardtype as level 2 predictors
 # and hospsize as level 3 predictor?
-# Yes, you can tell by looking at the df of the effects.                        #say how dfs are computed?
+# Yes, you can tell by looking at the df of the effects.                        
 
 # Test if there is an effect of condition on stress (controlling for all other
 # predictors in the dataset) and if the effect is different for different 
@@ -471,7 +483,7 @@ summary(MaximumModel_3lv)
 # stress, and the experimental condition leads to less stress.
 
 
-########################### Part 5: Cross-Nested Data ##########################  #or cross-classified?
+########################### Part 5: Cross-Nested Data ##########################  
 
 #------------------------------------------------------------------------------#
 # In the dataset pupcross, we have data from 1000 pupils who have attended 100 
