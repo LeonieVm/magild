@@ -24,6 +24,7 @@
 #install.packages("kableExtra")
 #install.packages("lme4")
 #install.packages("ICC")
+#install.packages("tidybayes")
 
 library(report)
 library(parameters)
@@ -44,6 +45,7 @@ library(knitr)
 library(kableExtra)
 library(lme4)
 library(ICC)
+library(tidybayes)
 library(tidyverse)
 
 #################### Part 3: Complete Multilevel Analysis ######################
@@ -130,11 +132,12 @@ plot(Mean[,2],Mean[,1])
 Total$Extraversion_c <- Total$Extraversion - mean(Total$Extraversion)
 
 # Grand Center the level 2 predictor
-# We're going to do this in two steps, because we can't use the raw teacherExp scores.
-# The reason for that is that each student has a teacherExp score in the datafile, while
-# teacherExp obviously is a class characteristic. So we'll first determine the
-# average teacherExp for each class (which is just the teacherExp score for that class),
-# and then calculate the average of those class-scores for centering.
+# We're going to do this in two steps, because we can't use the raw teacherExp 
+# scores. The reason for that is that each student has a teacherExp score in 
+# the datafile, while teacherExp obviously is a class characteristic. So we'll 
+# first determine the average teacherExp for each class (which is just the 
+# teacherExp score for that class), and then calculate the average of those 
+# class-scores for centering.
 Teacher_Exp <- matrix(NA, ncol = 1, nrow = 12)
 
 for (i in 1:12) {
@@ -282,7 +285,45 @@ MaximumModel_Bayes <- brm(Popular ~ 1 + Gender + Extraversion +
                           control = list(adapt_delta = 0.9), Total)
 summary(MaximumModel_Bayes)
 
-                                                                                #add code posterior/conclusion
+# Conclusions with respect to fixed effects are similar. There is an effect
+# Gender and Extraversion but not teacherExp.
+
+### Now for the random part
+
+# get names of parameters in the model
+get_variables(MaximumModel_Bayes)
+
+# Extract entire distribution of the random-intercept variance
+SdInt<- MaximumModel_Bayes %>%
+  spread_draws(sd_Class__Intercept)
+
+# Check the probability thet the intercept  variance is smaller than the smallest
+# value of interest (e.g., .02)
+sum((SdInt$sd_Class__Intercept)^2 < .02)/length(SdInt$sd_Class__Intercept)
+# 0% chance that the slope-variance is smaller than .01, so there is
+# definitely variance in the intercept.
+
+# Extract entire distribution of the random-slope for Gender
+SdGender <- MaximumModel_Bayes %>%
+              spread_draws(sd_Class__Gender)
+
+# Check the probability thet the slope variance is smaller than the smallest
+# value of interest (e.g., .02)
+sum((SdGender$sd_Class__Gender)^2 < .02)/length(SdGender$sd_Class__Gender)
+# 67.53% chance that the slope-variance is smaller than .01
+
+# Extract entire distribution of the random-slope for Extraversion
+SdExtra <- MaximumModel_Bayes %>%
+              spread_draws(sd_Class__Extraversion)
+
+# Check the probability thet the slope variance is smaller than the smallest
+# value of interest (e.g., .02)
+sum((SdExtra$sd_Class__Extraversion)^2 < .02)/
+  length(SdExtra$sd_Class__Extraversion)
+# 40.50% chance that the slope-variance is smaller than .01
+
+# So random slope variances are really small, which is why we won't model
+# them further.                                                                
 
 ################# Part 4: Common Issues and Three-Level Models #################
 
