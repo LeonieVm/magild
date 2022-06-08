@@ -58,7 +58,7 @@ library(tidyverse)
 # semesters. At the same time, it was recorded whether the student held a job 
 # in that semester, and for how many hours. This is recorded in a variable 
 # 'job' (= hours worked). Finally, we also have the student-level variables 
-# high school GPA and gender (0 = male, 1 = female)
+# high school GPA and gender (0 = male, 1 = female).
 #------------------------------------------------------------------------------#
 
 as_tibble(gpa)
@@ -70,7 +70,7 @@ as_tibble(gpa)
 
 # Start with the intercept only model in which you use Popular as the dependent 
 # variable, and calculate the ICC. Also determine if multilevel analysis is 
-# necessary. If needed, ask for instruction using ?lme
+# necessary. If needed, ask for instruction using ?lme.
 
 IO <- lm(gpa ~ 1, gpa)
 IO_ML <- lmer(gpa ~ 1 + (1 | student), gpa)
@@ -105,7 +105,7 @@ VarianceLv1 <- as.data.frame(VarCorr(Lvl1))
 # -.1152, explained variance can't be negative! This is because we have fixed
 # measurement occasions! There is way less variance between students in 
 # their time-scores than would be expected based on random sampling. Note
-# that with random measurement occasions, this would not be a problem
+# that with random measurement occasions, this would not be a problem.
 
 # What should you do now?                                                       
 # When adding more level 1 predictors, use the model WITH time as your reference 
@@ -118,7 +118,7 @@ summary(Lvl1)
 
 # Now, add the first level variable job to the model as a fixed effects. 
 # What is the explained variance on level 1 and level 2?
-# What is  your conclusions about this  predictor
+# What is  your conclusions about this  predictor?
 
 Lvl1_2 <- lmer(gpa ~ 1 + time + job + (1 | student), gpa)
 summary(Lvl1_2)
@@ -330,7 +330,7 @@ summary(GrowthModel_Bayes_AR)
 # level 2 predictors on top of that). In this model the interpretation of
 # parameters is complicated! I wrote an article on it with Ellen Hamaker
 # years ago, but main message is....be very careful when modeling systematic
-# change and AR relationsships in one model, and maybe see a statistician if
+# change and AR relationships in one model, and maybe see a statistician if
 # you really want to ;).
 
 
@@ -339,10 +339,10 @@ summary(GrowthModel_Bayes_AR)
 #------------------------------------------------------------------------------#
 
 # Data on 2 variables for 100 individuals each measured 50 times.
-# the means of the 2 variables are 4 and 4.5 respectively, with se's of .5.
+# The means of the 2 variables are 4 and 4.5 respectively, with SEs of .5.
 # The correlation between the two variables is .3. The AR parameters are .4 and
 # .3 respectively, while the two lagged effects are .2 and .1. All lagged
-# parameters have se's of .1. The residuals are standard normally distributed
+# parameters have SEs of .1. The residuals are standard normally distributed.
 
 # Let's start with a growth curve model again
 
@@ -366,7 +366,7 @@ sd(GrowthModel_Bayes_ARRes2$fit@sim$samples[[4]]$`ar[1]`) # .03
 # with predicted scores (based on the regression line) instead of simple means.
 # If you don't do this, the estimated AR parameter will be biased. 
 
-# Now, let's use a simple AR model again. We'll use variable Y1 
+# Now, let's use a simple AR model again. We'll use variable Y1. 
 
 AR1 <- brm(Y1 ~ Y1lag + (1 + Y1lag | individual), 
            iter = 5000, data = VARData)
@@ -389,12 +389,12 @@ AR1_c <- brm(Y1 ~ Y1lag_c + (1 + Y1lag_c | individual ),
 summary(AR1_c)
 
 # Much better ;). Although using sample means to group mean center isn't ideal
-# We can use estimates of the individual means, but than we have to write
+# We can use estimates of the individual means, but then we have to write
 # our own code...or you should come see me ;)
 
 
 # Now, we typically want to model several longitudinal variables at the same 
-# time. This can be done with VAR models, which are  multivariate
+# time. This can be done with VAR models, which are multivariate
 # AR models.
 
 # First, we create a model to model Y1 and Y2 simultaneously! We use the mvbind
@@ -407,13 +407,12 @@ bform1 <-
   bf(mvbind(Y1, Y2) ~ Y1lag_c + Y2lag_c + (1|p|individual))
 
 # This model takes some time to run, so the result is already included ;)
-VAR <- brm(bform1, data = VARData, iter = 5000, chains = 2, cores = 2)
+#VAR <- brm(bform1, data = VARData, iter = 5000, chains = 2, cores = 2)
 summary(VAR)
 
-### Finally, let's look at longitudinal network models....and let's just use 
+# Finally, let's look at longitudinal network models....and let's just use 
 # our VAR data. This could be seen as a network of only two nodes after 
 # all. Do you see a difference between the network and the VAR model?
-
 
 LongNet <- mlVAR(VARData[, c(1:3)], vars = c("Y1", "Y2"), 
                  idvar = c("individual"), 
@@ -441,7 +440,7 @@ plot(LongNet)
 
 # The VAR model has some benefits over the network approach since it uses
 # true multilevel analysis, and the parameters are easier to interpret (i.e.,
-# we get information on "significance" etc), but it scales less nicely to 
+# we get information on "significance" etc.), but it scales less nicely to 
 # larger sample sizes and larger number of variables (although there are 
 # ways around that). Networks also have nicer visualization out of the box.
 # Which method you choose again comes down to modeling the same data in slightly
