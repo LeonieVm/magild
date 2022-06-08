@@ -200,11 +200,11 @@ VarianceLv1 <- as.data.frame(VarCorr(Lvl1))
 
 # Explained Variance on Level 1
 (VarianceIO[2,4] - VarianceLv1[2,4])/ VarianceIO[2,4]
-# .5159
+# .5183
 
 # Explained Variance on Level 2
 (VarianceIO[1,4] - VarianceLv1[1,4])/ VarianceIO[1,4]
-# -.2431, explained variance can't be negative! This is likely because there is 
+# -.2370, explained variance can't be negative! This is likely because there is 
 # less variance between classes in either extraversion, gender, or both, than 
 # would be expected based on random sampling.
 
@@ -224,7 +224,7 @@ VarianceFE <- as.data.frame(VarCorr(FixedEffects))
 
 # Explained Variance on Level 2 (compared to model with just level 1 predictors)                                   
 (VarianceLv1[1,4] - VarianceFE[1,4])/ VarianceLv1[1,4]
-# .2920
+# .1662
 
 # Now, check if the relation between the first level predictors and popularity 
 # is the same across classes. What type of effect do you need to add for testing 
