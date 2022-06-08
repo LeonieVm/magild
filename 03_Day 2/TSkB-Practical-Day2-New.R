@@ -214,7 +214,7 @@ VarianceLv1 <- as.data.frame(VarCorr(Lvl1))
 
 FixedEffects <- lmer(Popular ~ 1 + Gender + Extraversion + teacherExp + 
                        (1 | Class), Total)
-summary(FixedEffects)# Teacher experience is significantly related to popularity.
+summary(FixedEffects)# Teacher experience is not significantly related to popularity.
 
 VarianceFE <- as.data.frame(VarCorr(FixedEffects))
 
