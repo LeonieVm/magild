@@ -1,8 +1,8 @@
 #==============================================================================#
-# Day 3: Practical Part 6
+# Day 3: Practical Parts 6 & 7
 #==============================================================================#
 
-# For the practical, you have to load Workspace-TSkB-Practical-Day3-Def.RData.
+# For the two practical parts, load Workspace-TSkB-Practical-Day3-Def.RData.
 
 ### Packages required for Practical --------------------------------------------
 
@@ -48,10 +48,7 @@ library(ICC)
 library(mlVAR)
 library(tidyverse)
 
-#------------------------------------------------------------------------------#
-### Exercise 6a Longitudinal Data-----------------------------------------------
-#------------------------------------------------------------------------------#
-
+######################### Part 6: Longitudinal Data ############################
 #------------------------------------------------------------------------------#
 # The dataset "gpa"  contains longitudinal data set on 200 college students. 
 # The students' grade point average (GPA) has been recorded for six successive 
@@ -274,10 +271,10 @@ coef(summary(RandomEffects)) #this gives you the fixed effects
 # for time.
 
 
+####################### Part 7: Growthcurve and AR #############################
 #------------------------------------------------------------------------------#
-## Exercise 6b AR-Residuals-----------------------------------------------------
+## Exercise 7a Longitudinal Data------------------------------------------------
 #------------------------------------------------------------------------------#
-
 # For speed purposes, let's only focus on time and highgpa for the following
 # analyses :)
 
@@ -299,7 +296,7 @@ GrowthModel_Bayes_ARRes <- brm(gpa ~ 1 + time + highgpa + ar(p = 1) +
 
 summary(GrowthModel_Bayes_ARRes)                                                
 
-# There is no mention of the AR at all!! Because it's considered a nuisance     
+# There is no mention of the AR at all!! Because it's considered a nuisance.     
 # It is there though! All other results are pretty similar. This is because 
 # there isn't a lot of autocorrelation. We can see that as follows:
 
@@ -326,16 +323,15 @@ GrowthModel_Bayes_AR <- brm(gpa ~ 1 + time + highgpa + gpa_L +
 summary(GrowthModel_Bayes_AR)
 
 # Note that the AR value here and in the previous model don't match....that's
-# because we are fitting a very "weird"  called the ALT-model (and adding 
+# because we are fitting a very "weird" model called the ALT-model (and adding 
 # level 2 predictors on top of that). In this model the interpretation of
 # parameters is complicated! I wrote an article on it with Ellen Hamaker
-# years ago, but main message is....be very careful when modeling systematic
+# years ago, but the main message is: Be very careful when modeling systematic
 # change and AR relationships in one model, and maybe see a statistician if
 # you really want to ;).
 
-
 #------------------------------------------------------------------------------#
-### Exercise 6c Intensive Longitudinal Data-------------------------------------
+### Exercise 7b Intensive Longitudinal Data ------------------------------------
 #------------------------------------------------------------------------------#
 
 # Data on 2 variables for 100 individuals each measured 50 times.
